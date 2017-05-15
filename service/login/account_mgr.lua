@@ -8,9 +8,9 @@ local dbconf = {
     host="127.0.0.1",
     port=27017,
     db="game",
-    username="yun",
-    password="yun",
-    authmod="mongodb_cr"
+--    username="yun",
+--    password="yun",
+--    authmod="mongodb_cr"
 }
 
 local M = {}
@@ -33,7 +33,6 @@ function M:load_all()
     while it:hasNext() do
         local obj = it:next()
         self.account_tbl[obj.account] = obj
-        print(utils.table_2_str(obj))
     end
 end
 

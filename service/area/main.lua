@@ -1,21 +1,26 @@
 local skynet = require "skynet"
 local player_mgr = require "player_mgr"
-local table_mgr = require "table_mgr"
-local mjlib = require "mjlib"
+local room = require "room"
+local room_mgr = require "room_mgr"
 
-local room_id = ...
-room_id = tonumber(room_id)
+local area_id = ...
+area_id = tonumber(area_id)
 
 local CMD = {}
 
-function CMD.enter()
-    player_mgr:init()
+function CMD.create_room(info)
+    print("创建游戏")
 
-    table_mgr:init()
+    local obj = room.new(info)
+    room_mgr:add(obj)
+    obj:begin()
 end
 
 function CMD.leave()
 
+end
+
+function CMD.test()
 end
 
 skynet.start(function ()
@@ -30,7 +35,5 @@ skynet.start(function ()
         end
     end)
 
-    if room_id == 1 then
-        mjlib.test()
-    end
+    room_mgr:init()
 end)

@@ -1,27 +1,28 @@
 local skynet = require "skynet"
 require "skynet.manager"
+local G = require "global"
 local room_mgr = require "room_mgr"
-local room_list = require "room_list"
-local room = require "room"
+local timer_mgr = require "timer_mgr"
+
+local function init()
+    G.timer_mgr = timer_mgr.new()
+    G.room_mgr = room_mgr
+    room_mgr:init()
+    G.room_timer = G.timer_mgr:add(1*1000, -1, function() room_mgr:check_ready() end)
+end
 
 local CMD = {}
 
-function CMD.start()
-    room_mgr:init()
-
-    for _,v in ipairs(room_list) do
-        skynet.error("创建房间 "..v.name)
-        local room_obj = room.create(v)
-        room_mgr:add_room(room_obj)
-    end
+function CMD.create_room(game_id, player_info)
+    return room_mgr:create(game_id, player_info)
 end
 
-function CMD.enter_room()
-
+function CMD.join_room(room_id, player_info)
+    return room_mgr:join(room_id, player_info)
 end
 
-function CMD.leave_room()
-
+function CMD.room_begin(room_id)
+    room_mgr:room_begin(room_id)
 end
 
 local function dispatch(_, session, cmd, ...)
@@ -37,6 +38,8 @@ end
 
 skynet.start(function ()
     skynet.dispatch("lua", dispatch)
+
+    init()
 
     skynet.register("room_mgr")
 
